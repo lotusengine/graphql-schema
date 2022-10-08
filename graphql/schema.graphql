@@ -1,0 +1,1365 @@
+# Account user access types
+enum AccessType {
+  owner
+  admin
+  operator
+  none
+}
+
+# Asset definition
+type Asset implements Node @aws_api_key @aws_cognito_user_pools {
+  # Asset ID
+  id: ID!
+  # Service
+  service: Service!
+  # Asset name
+  label: String
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Asset mime type
+  type: String
+  # Asset url
+  path: String
+}
+
+type AssetConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Asset]
+  # Pagination token
+  nextToken: String
+}
+
+input CreateAssetInput {
+  # Asset name
+  label: String
+  # Asset mime
+  type: String
+}
+
+type CreateAssetPayload @aws_api_key @aws_cognito_user_pools {
+  # Asset ID
+  id: ID!
+  # Upload URL
+  endpoint: AWSURL
+  # Expiration timestamp
+  expiry: Int
+}
+
+input UpdateAssetInput {
+  # Asset ID
+  id: ID!
+  # Asset name
+  label: String
+}
+
+type UpdateAssetPayload @aws_api_key @aws_cognito_user_pools {
+  # Asset ID
+  id: ID
+}
+
+input DeleteAssetInput {
+  # Asset ID
+  id: ID!
+}
+
+type DeleteAssetPayload @aws_api_key @aws_cognito_user_pools {
+  # Asset ID
+  id: ID
+}
+
+# Account definition
+type Account implements Node @aws_api_key @aws_cognito_user_pools {
+  # Account ID
+  id: ID!
+  # Item friendly name
+  label: String
+  # User permissions
+  permissions: [UserAccess]
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  isActive: Boolean
+  usage(startDate: AWSDate, endDate: AWSDate): AccountUsage
+}
+
+# Account usage summary
+type AccountUsage @aws_api_key @aws_cognito_user_pools {
+  runtime: Int!
+  request: Int!
+  storage: Int!
+}
+
+input BatchCreateItem {
+  # Collection ID
+  collectionId: ID!
+  data: AWSJSON!
+}
+
+input BatchCreateItemsInput {
+  items: [BatchCreateItem]!
+}
+
+type BatchCreateItemsPayload @aws_api_key @aws_cognito_user_pools {
+  ids: [ID]
+}
+
+input BatchDeleteItemsInput {
+  items: [ID]!
+}
+
+type BatchDeleteItemsPayload @aws_api_key @aws_cognito_user_pools {
+  ids: [ID]
+}
+
+input BooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+# Collection definition
+type Collection @aws_api_key @aws_cognito_user_pools {
+  # Collection ID
+  id: ID!
+  # Service
+  service: Service!
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # General options
+  options: AWSJSON
+  # Field mapping
+  mapping: AWSJSON
+  # Projection
+  projection: AWSJSON
+  # Trigger queries
+  triggers: AWSJSON
+  # CollectionInsight queries
+  queries: AWSJSON
+  # Collection usage
+  usage(startDate: AWSDate, endDate: AWSDate): CollectionUsage
+  # Collection insight
+  insight(
+    startDate: AWSDateTime
+    endDate: AWSDateTime
+    query: String!
+    interval: CollectionInsightInterval!
+  ): CollectionInsight
+}
+
+type CollectionConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Collection]
+  # Pagination token
+  nextToken: String
+}
+
+# Collection insight result
+type CollectionInsight @aws_api_key @aws_cognito_user_pools {
+  value: Float!
+  count: Int!
+}
+
+# Collection insight interval
+enum CollectionInsightInterval {
+  hour
+  day
+  week
+  month
+  year
+}
+
+type CollectionUsage @aws_api_key @aws_cognito_user_pools {
+  storage: Int
+}
+
+input CreateCollectionInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # General options
+  options: AWSJSON
+  # Field mapping
+  mapping: AWSJSON
+  # Projection
+  projection: AWSJSON
+  # Trigger queries
+  triggers: AWSJSON
+  # CollectionInsight queries
+  queries: AWSJSON
+}
+
+type CreateCollectionPayload @aws_api_key @aws_cognito_user_pools {
+  # Collection ID
+  id: ID!
+}
+
+input CreateItemInput {
+  # Collection ID
+  collectionId: ID!
+  data: AWSJSON
+}
+
+type CreateItemPayload @aws_api_key @aws_cognito_user_pools {
+  # Item ID
+  id: ID!
+}
+
+input CreateModuleInput {
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Module options
+  options: AWSJSON
+  # Module events
+  events: AWSJSON
+  # URL to source file
+  repository: String
+  # Inline source code
+  source: String
+  # Module scope
+  scope: ModuleScope
+  # Module author and homepage
+  meta: MetaInput
+}
+
+type CreateModulePayload @aws_api_key @aws_cognito_user_pools {
+  # Module ID
+  id: ID!
+}
+
+input CreatePackageFromServiceInput {
+  # Service ID
+  serviceId: ID!
+}
+
+input CreatePackageInput {
+  stack: AWSJSON
+  # Detailed markdown description
+  description: String
+  # Short summary
+  summary: String
+  # Item friendly name
+  label: String
+  scope: PackageScope
+  # Package author and homepage
+  meta: MetaInput
+}
+
+type CreatePackagePayload @aws_api_key @aws_cognito_user_pools {
+  # Package ID
+  id: ID!
+}
+
+input CreateParameterInput {
+  key: String!
+  value: String!
+  # Short summary
+  summary: String
+}
+
+type CreateParameterPayload @aws_api_key @aws_cognito_user_pools {
+  # Parameter ID
+  id: ID!
+  # Parameter key
+  key: String
+  # Parameter value
+  value: String
+  # Short summary
+  summary: String
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+}
+
+input CreateServiceInput {
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Service parameters
+  parameters: AWSJSON
+  # Service settings definition
+  settings: AWSJSON
+}
+
+type CreateServicePayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  id: ID!
+}
+
+input CreateViewInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+}
+
+type CreateViewPayload @aws_api_key @aws_cognito_user_pools {
+  # View ID
+  id: ID!
+}
+
+input CreateWorkflowInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  definition: AWSJSON
+}
+
+type CreateWorkflowPayload @aws_api_key @aws_cognito_user_pools {
+  # Workflow ID
+  id: ID!
+}
+
+input DateRangeFilterInput {
+  start: AWSDate!
+  end: AWSDate!
+}
+
+input DateTimeRangeFilterInput {
+  start: AWSDateTime
+  end: AWSDateTime
+}
+
+input DeleteCollectionInput {
+  # Collection ID
+  id: ID!
+}
+
+type DeleteCollectionPayload @aws_api_key @aws_cognito_user_pools {
+  # Collection ID
+  id: ID!
+}
+
+input DeleteItemInput {
+  # Item ID
+  id: ID!
+}
+
+type DeleteItemPayload @aws_api_key @aws_cognito_user_pools {
+  # Item ID
+  id: ID
+}
+
+input DeleteModuleInput {
+  # Module ID
+  id: ID!
+}
+
+type DeleteModulePayload @aws_api_key @aws_cognito_user_pools {
+  # Module ID
+  id: ID
+}
+
+input DeletePackageInput {
+  # Package ID
+  id: ID!
+}
+
+type DeletePackagePayload @aws_api_key @aws_cognito_user_pools {
+  # Package ID
+  id: ID
+}
+
+input DeleteParameterInput {
+  # Parameter ID
+  id: ID!
+}
+
+type DeleteParameterPayload @aws_api_key @aws_cognito_user_pools {
+  # Parameter ID
+  id: ID!
+}
+
+input DeleteServiceInput {
+  # Service ID
+  id: ID!
+}
+
+type DeleteServicePayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  id: ID
+}
+
+input DeleteViewInput {
+  # View ID
+  id: ID!
+}
+
+type DeleteViewPayload @aws_api_key @aws_cognito_user_pools {
+  # View ID
+  id: ID!
+}
+
+input DeleteWorkflowInput {
+  # Workflow ID
+  id: ID!
+}
+
+type DeleteWorkflowPayload @aws_api_key @aws_cognito_user_pools {
+  # Workflow ID
+  id: ID
+}
+
+input DeployStackInput {
+  # Stack data
+  stack: AWSJSON!
+  # Force deploy flag
+  force: Boolean
+}
+
+type DeployStackPayload @aws_api_key @aws_cognito_user_pools {
+  # Stack ID
+  id: ID!
+}
+
+input DestroyStackInput {
+  # Stack ID
+  id: ID!
+  # Force destroy flag
+  force: Boolean
+}
+
+type DestroyStackPayload @aws_api_key @aws_cognito_user_pools {
+  # Stack ID
+  id: ID!
+}
+
+interface Element {
+  # Unique ID
+  id: ID!
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Primary JSON data
+  data: AWSJSON
+}
+
+input FloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input IDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input IntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input InvokeModuleInput {
+  # Module ID
+  id: ID!
+  # Test JSON parameters
+  parameters: AWSJSON
+  # Test JSON payload
+  payload: AWSJSON
+}
+
+type InvokeModulePayload @aws_api_key @aws_cognito_user_pools {
+  # Module ID
+  id: ID
+  # Module invocation response
+  response: AWSJSON
+}
+
+# Collection item definition
+type Item implements Element @aws_api_key @aws_cognito_user_pools {
+  # Item ID
+  id: ID!
+  # Collection
+  collection: Collection!
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Primary JSON data
+  data: AWSJSON
+  # Additional info JSON data
+}
+
+type ItemConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Item]
+  # Pagination token
+  nextToken: String
+}
+
+# Item query filter criteria
+input ItemFilter {
+  # Item search from date
+  startDate: AWSDateTime
+  # Item search until date
+  endDate: AWSDateTime
+}
+
+# Service workflow logs
+type Log @aws_api_key @aws_cognito_user_pools {
+  # Log ID
+  id: ID!
+  # Workflow process ID
+  processId: ID!
+  # Workflow ID
+  workflowId: ID!
+  # When action was triggered
+  triggeredAt: AWSDateTime
+  # Action result
+  status: LogStatus
+  # Action name
+  name: String
+  # Action type
+  type: String
+  # Action result
+  result: AWSJSON
+}
+
+type LogConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Log]
+  # Pagination token
+  nextToken: String
+}
+
+# Log query filter criteria
+input LogFilter {
+  # Log search from date
+  startDate: AWSDateTime
+  # Log search until date
+  endDate: AWSDateTime
+  # Log status to filter by
+  status: LogStatus
+  # Workflow ID to filter by
+  workflowId: ID
+  # Workflow process ID to filter by
+  processId: ID
+}
+
+# Action result status
+enum LogStatus {
+  success
+  error
+}
+
+# Module definition
+type Module implements Node @aws_api_key @aws_cognito_user_pools {
+  # Module ID
+  id: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # URL to source file
+  repository: String
+  # Inline source code
+  source: String
+  # Access scope
+  scope: ModuleScope
+  # Module options
+  options: AWSJSON
+  # Module events
+  events: AWSJSON
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Module is deployed and active
+  isActive: Boolean
+  # Module author and homepage
+  meta: Meta
+}
+
+type Meta {
+  author: String
+  url: String
+}
+
+input MetaInput {
+  author: String
+  url: String
+}
+
+type ModuleConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Module]
+  # Pagination token
+  nextToken: String
+}
+
+# Module access types
+enum ModuleScope {
+  public
+  private
+  secret
+}
+
+type Mutation @aws_api_key @aws_cognito_user_pools {
+  # Create a new asset
+  createAsset(input: CreateAssetInput!): CreateAssetPayload!
+
+  # Update a asset
+  updateAsset(input: UpdateAssetInput!): UpdateAssetPayload!
+
+  # Delete a asset
+  deleteAsset(input: DeleteAssetInput!): DeleteAssetPayload!
+
+  # Manage account access
+  setAccountAccess(input: SetAccountAccessInput!): SetAccountAccessPayload!
+
+  # Deploy a stack
+  deployStack(input: DeployStackInput!): DeployStackPayload!
+
+  # Destroy a stack
+  destroyStack(input: DestroyStackInput!): DestroyStackPayload!
+
+  # Validate a new collection definition
+  validateCollection(
+    input: ValidateCollectionInput!
+  ): ValidateCollectionPayload!
+  # Create a new collection definition
+  createCollection(input: CreateCollectionInput!): CreateCollectionPayload!
+
+  # Update a collection definition
+  updateCollection(input: UpdateCollectionInput!): UpdateCollectionPayload!
+
+  # Delete a collection definition
+  deleteCollection(input: DeleteCollectionInput!): DeleteCollectionPayload!
+
+  # Create a new collection item
+  createItem(input: CreateItemInput!): CreateItemPayload!
+
+  # Update collection item
+  updateItem(input: UpdateItemInput!): UpdateItemPayload!
+
+  # Delete a collection item
+  deleteItem(input: DeleteItemInput!): DeleteItemPayload!
+
+  # Batch create new collection items
+  batchCreateItems(input: BatchCreateItemsInput): BatchCreateItemsPayload!
+
+  # Batch delete collection items
+  batchDeleteItems(input: BatchDeleteItemsInput): BatchDeleteItemsPayload!
+
+  # Create a new module
+  createModule(input: CreateModuleInput!): CreateModulePayload!
+
+  # Update a module
+  updateModule(input: UpdateModuleInput!): UpdateModulePayload!
+
+  # Delete a module
+  deleteModule(input: DeleteModuleInput!): DeleteModulePayload!
+
+  # Invoke a module
+  invokeModule(input: InvokeModuleInput!): InvokeModulePayload!
+
+  # Create a new parameter
+  createParameter(input: CreateParameterInput!): CreateParameterPayload!
+
+  # Update a parameter
+  updateParameter(input: UpdateParameterInput!): UpdateParameterPayload!
+
+  # Delete a parameter
+  deleteParameter(input: DeleteParameterInput!): DeleteParameterPayload!
+
+  # Validate a service form
+  validateService(input: ValidateServiceInput!): ValidateServicePayload!
+
+  # Create a new service
+  createService(input: CreateServiceInput!): CreateServicePayload!
+
+  # Update a service
+  updateService(input: UpdateServiceInput!): UpdateServicePayload!
+
+  # Delete a service
+  deleteService(input: DeleteServiceInput!): DeleteServicePayload!
+
+  # Validate a new view definition
+  validateView(input: ValidateViewInput!): ValidateViewPayload!
+
+  # Create a new view definition
+  createView(input: CreateViewInput!): CreateViewPayload!
+
+  # Update a view definition
+  updateView(input: UpdateViewInput!): UpdateViewPayload!
+
+  # Delete a view definition
+  deleteView(input: DeleteViewInput!): DeleteViewPayload!
+
+  # Validate a workflow definition
+  validateWorkflow(input: ValidateWorkflowInput!): ValidateWorkflowPayload!
+
+  # Create a new workflow
+  createWorkflow(input: CreateWorkflowInput!): CreateWorkflowPayload
+
+  # Update a workflow
+  updateWorkflow(input: UpdateWorkflowInput!): UpdateWorkflowPayload
+
+  # Delete a workflow
+  deleteWorkflow(input: DeleteWorkflowInput!): DeleteWorkflowPayload
+
+  # Trigger a workflow
+  triggerWorkflow(input: TriggerWorkflowInput!): TriggerWorkflowPayload
+}
+
+interface Node {
+  # Unique ID
+  id: ID!
+}
+
+# Package definition
+type Package implements Node @aws_api_key @aws_cognito_user_pools {
+  # Package ID
+  id: ID!
+  stack: AWSJSON
+  # Detailed markdown description
+  description: String
+  # Short summary
+  summary: String
+  # Item friendly name
+  label: String
+  scope: PackageScope
+  # Package author and homepage
+  meta: Meta
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+}
+
+type PackageConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Package]
+  # Pagination token
+  nextToken: String
+}
+
+enum PackageScope {
+  public
+  secret
+}
+
+# Parameter definition
+type Parameter implements Node @aws_api_key @aws_cognito_user_pools {
+  # Parameter ID
+  id: ID!
+  key: String
+  value: String
+  # Short summary
+  summary: String
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+}
+
+type ParameterConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Parameter]
+  # Pagination token
+  nextToken: String
+}
+
+type Query @aws_api_key @aws_cognito_user_pools {
+  node(id: ID!): Node
+
+  # Fetch an account
+  account(id: ID!): Account
+
+  # Retrieve asset
+  asset(id: ID!): Asset!
+
+  # Fetch all assets
+  assets(after: String, limit: Int): AssetConnection!
+
+  # List a user's accounts
+  memberships: UserAccountsConnection
+
+  # Retrieve collection
+  collection(id: ID!): Collection!
+
+  # Fetch multiple collections
+  collections(serviceId: ID, after: String, limit: Int): CollectionConnection!
+
+  # Fetch one item
+  item(id: ID!): Item!
+
+  # Fetch multiple items by collection
+  items(
+    collectionId: ID!
+    filter: ItemFilter
+    search: String
+    limit: Int
+  ): ItemConnection
+
+  # Find workflow logs by criteria
+  logs(
+    serviceId: ID!
+    filter: LogFilter
+    search: String
+    limit: Int
+  ): LogConnection!
+
+  # Fetch a module
+  module(id: ID!): Module!
+
+  # Fetches all modules
+  modules(after: String, limit: Int): ModuleConnection
+
+  # Fetch a parameter
+  parameter(id: ID!): Parameter!
+
+  # Fetches all parameters
+  parameters(after: String, limit: Int): ParameterConnection
+
+  # Fetch a service
+  service(id: ID!): Service!
+
+  # Fetch multiple services
+  services(after: String, limit: Int): ServiceConnection!
+
+  # Retrieve view
+  view(id: ID!): View!
+
+  # Fetch multiple views
+  views(serviceId: ID, after: String, limit: Int): ViewConnection!
+
+  # Fetch a workflow
+  workflow(id: ID!): Workflow!
+
+  # Fetch multiple workflows
+  workflows(serviceId: ID, after: String, limit: Int): WorkflowConnection!
+}
+
+# Service definition
+type Service implements Node @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  id: ID!
+  # Service base URL
+  domain: String
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Service parameters
+  parameters: AWSJSON
+  # Service settings definition
+  settings: AWSJSON
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+}
+
+type ServiceConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Service]
+  # Pagination token
+  nextToken: String
+}
+
+input SetAccountAccessInput {
+  # Account ID
+  id: ID
+  # User ID
+  userId: ID!
+  permission: AccessType
+}
+
+type SetAccountAccessPayload @aws_api_key @aws_cognito_user_pools {
+  # Account ID
+  id: ID!
+}
+
+input StringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+type Subscription @aws_api_key @aws_cognito_user_pools {
+  _empty: String
+}
+
+# Trigger methods
+enum TriggerMethod {
+  webhook
+  api
+  schedule
+  event
+}
+
+input TriggerWorkflowInput {
+  # Workflow ID
+  id: ID!
+  # Workflow payload as JSON string
+  payload: String
+}
+
+type TriggerWorkflowPayload @aws_api_key @aws_cognito_user_pools {
+  status: WorkflowStatus
+  result: AWSJSON
+  errors: [WorkflowError]
+}
+
+input UpdateCollectionInput {
+  # Collection ID
+  id: ID!
+  # Service ID
+  serviceId: ID
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # General options
+  options: AWSJSON
+  # Field mapping
+  mapping: AWSJSON
+  # Projection
+  projection: AWSJSON
+  # Trigger queries
+  triggers: AWSJSON
+  # CollectionInsight queries
+  queries: AWSJSON
+}
+
+type UpdateCollectionPayload @aws_api_key @aws_cognito_user_pools {
+  # Collection ID
+  id: ID!
+}
+
+input UpdateItemInput {
+  # Item ID
+  id: ID!
+  collectionId: ID!
+  data: AWSJSON
+}
+
+type UpdateItemPayload @aws_api_key @aws_cognito_user_pools {
+  # Item ID
+  id: ID
+}
+
+input UpdateModuleInput {
+  # Module ID
+  id: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Module options
+  options: AWSJSON
+  # Module events
+  events: AWSJSON
+  # URL to source file
+  repository: String
+  # Inline source code
+  source: String
+  # Module scope
+  scope: ModuleScope
+  # Module author and homepage
+  meta: MetaInput
+}
+
+type UpdateModulePayload @aws_api_key @aws_cognito_user_pools {
+  # Module ID
+  id: ID
+}
+
+input UpdatePackageInput {
+  # Package ID
+  id: ID!
+  stack: AWSJSON
+  # Detailed markdown description
+  description: String
+  # Short summary
+  summary: String
+  # Item friendly name
+  label: String
+  scope: PackageScope
+  # Module author and homepage
+  meta: MetaInput
+}
+
+type UpdatePackagePayload @aws_api_key @aws_cognito_user_pools {
+  # Package ID
+  id: ID
+}
+
+input UpdateParameterInput {
+  # Parameter ID
+  id: ID!
+  key: String
+  value: String
+  # Short summary
+  summary: String
+}
+
+type UpdateParameterPayload @aws_api_key @aws_cognito_user_pools {
+  # Parameter ID
+  id: ID!
+  key: String
+  value: String
+  # Short summary
+  summary: String
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+}
+
+input UpdateServiceInput {
+  # Service ID
+  id: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Service parameters
+  parameters: AWSJSON
+  # Service settings definition
+  settings: AWSJSON
+}
+
+type UpdateServicePayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  id: ID
+}
+
+input UpdateViewInput {
+  # View ID
+  id: ID!
+  # Service ID
+  serviceId: ID
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+}
+
+type UpdateViewPayload @aws_api_key @aws_cognito_user_pools {
+  # View ID
+  id: ID!
+}
+
+input UpdateWorkflowInput {
+  # Workflow ID
+  id: ID!
+  # Service ID
+  serviceId: ID
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  definition: AWSJSON
+}
+
+type UpdateWorkflowPayload @aws_api_key @aws_cognito_user_pools {
+  # Workflow ID
+  id: ID!
+}
+
+type UserAccess @aws_api_key @aws_cognito_user_pools {
+  # User ID
+  userId: ID!
+  permission: AccessType
+}
+
+type UserAccounts implements Node @aws_api_key @aws_cognito_user_pools {
+  # User ID
+  id: ID!
+  permission: String!
+}
+
+type UserAccountsConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [UserAccounts]
+  # Pagination token
+  nextToken: String
+}
+
+input ValidateCollectionInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # General options
+  options: AWSJSON
+  # Field mapping
+  mapping: AWSJSON
+  # Projection
+  projection: AWSJSON
+  # Trigger queries
+  triggers: AWSJSON
+  # CollectionInsight queries
+  queries: AWSJSON
+}
+
+type ValidateCollectionPayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # General options
+  options: AWSJSON
+  # Field mapping
+  mapping: AWSJSON
+  # Projection
+  projection: AWSJSON
+  # Trigger queries
+  triggers: AWSJSON
+  # CollectionInsight queries
+  queries: AWSJSON
+}
+
+input ValidatePackageInput {
+  data: AWSJSON
+  image: String
+  # Detailed markdown description
+  description: String
+  # URL to source file
+  repository: String
+  # Inline source code
+  source: String
+  # Item friendly name
+  label: String
+  # Package scope
+  scope: PackageScope
+}
+
+type ValidatePackagePayload @aws_api_key @aws_cognito_user_pools {
+  data: AWSJSON
+  image: String
+  # Detailed markdown description
+  description: String
+  # URL to source file
+  repository: String
+  # Inline source code
+  source: String
+  # Item friendly name
+  label: String
+  # Package scope
+  scope: PackageScope
+}
+
+input ValidateServiceInput {
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Service parameters
+  parameters: AWSJSON
+  # Service settings definition
+  settings: AWSJSON
+}
+
+type ValidateServicePayload @aws_api_key @aws_cognito_user_pools {
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Detailed markdown description
+  description: String
+  # Service parameters
+  parameters: AWSJSON
+  # Service settings definition
+  settings: AWSJSON
+}
+
+input ValidateViewInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Content
+  content: String
+  # Type
+  type: String
+  # Active state
+  isActive: Boolean
+}
+
+type ValidateViewPayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  serviceId: ID
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Content
+  content: String
+  # Type
+  type: String
+  # Active state
+  isActive: Boolean
+}
+
+input ValidateWorkflowInput {
+  # Service ID
+  serviceId: ID!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Workflow definition
+  definition: AWSJSON
+}
+
+type ValidateWorkflowPayload @aws_api_key @aws_cognito_user_pools {
+  # Service ID
+  serviceId: ID
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Workflow definition
+  definition: AWSJSON
+}
+
+# View definition
+type View @aws_api_key @aws_cognito_user_pools {
+  # View ID
+  id: ID!
+  # Service
+  service: Service!
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Content
+  content: String
+  # View usage
+  usage(startDate: AWSDate, endDate: AWSDate): ViewUsage
+}
+
+type ViewConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [View]
+  # Pagination token
+  nextToken: String
+}
+
+type ViewUsage @aws_api_key @aws_cognito_user_pools {
+  request: Int
+}
+
+# Workflow definition
+type Workflow implements Node @aws_api_key @aws_cognito_user_pools {
+  # Workflow ID
+  id: ID!
+  # Service
+  service: Service!
+  # Item friendly name
+  label: String
+  # Short summary
+  summary: String
+  # Workflow definition
+  definition: AWSJSON
+  # Created date and time
+  createdAt: AWSDateTime
+  # Updated date and time
+  updatedAt: AWSDateTime
+  # Workflow usage
+  usage(startDate: AWSDate, endDate: AWSDate): WorkflowUsage
+}
+
+type WorkflowConnection @aws_api_key @aws_cognito_user_pools {
+  # Pagination items
+  nodes: [Workflow]
+  # Pagination token
+  nextToken: String
+}
+
+type WorkflowError @aws_api_key @aws_cognito_user_pools {
+  code: String!
+  message: String
+  data: AWSJSON
+}
+
+enum WorkflowStatus {
+  success
+  error
+}
+
+type WorkflowUsage @aws_api_key @aws_cognito_user_pools {
+  runtime: Int
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
